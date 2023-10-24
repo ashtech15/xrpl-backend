@@ -43,7 +43,6 @@ export const decode: RequestHandler = async (req, res) => {
   const { uri } = req.params;
 
   const decoded = await XrpService.decode(uri);
-
   const response = new SuccessResponse(null, decoded);
   res.status(StatusCodes.OK).send(response);
 };
@@ -60,7 +59,6 @@ export const mint: RequestHandler = async (req, res) => {
   const { address, seed, uri } = req.body;
 
   const mintResult = await XrpService.mint(address, seed, uri);
-
   const response = new SuccessResponse(null, mintResult);
   res.status(StatusCodes.OK).send(response);
 };
@@ -69,7 +67,6 @@ export const burn: RequestHandler = async (req, res) => {
   const { address, seed, tokenId } = req.body;
 
   const burnResult = await XrpService.burn(address, seed, tokenId);
-
   const response = new SuccessResponse(null, burnResult);
   res.status(StatusCodes.OK).send(response);
 };
@@ -83,7 +80,6 @@ export const createSellOffer: RequestHandler = async (req, res) => {
     tokenId,
     destination,
   );
-
   const response = new SuccessResponse(null, createSellOfferResult);
   res.status(StatusCodes.OK).send(response);
 };
@@ -96,7 +92,6 @@ export const acceptSellOffer: RequestHandler = async (req, res) => {
     seed,
     sellOffer,
   );
-
   const response = new SuccessResponse(null, acceptSellOfferResult);
   res.status(StatusCodes.OK).send(response);
 };

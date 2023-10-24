@@ -82,11 +82,8 @@ export const mint = async (
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
-
   const account_info = await getAccount(address);
-
   const currentSequence = account_info.result.account_data.Sequence;
-
   Logger.info("currentSequence: " + currentSequence);
 
   const transactionJson: any = {
@@ -101,14 +98,12 @@ export const mint = async (
   };
 
   const signedTx = wallet.sign(transactionJson);
-
   Logger.info("signedTx: " + JSON.stringify(signedTx));
 
   const tx = await client.request({
     command: "submit",
     tx_blob: signedTx.tx_blob,
   });
-
   Logger.info("tx: " + JSON.stringify(tx));
 
   await client.disconnect();
@@ -125,11 +120,8 @@ export const burn = async (
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
-
   const account_info = await getAccount(address);
-
   const currentSequence = account_info.result.account_data.Sequence;
-
   Logger.info("currentSequence: " + currentSequence);
 
   const transactionJson: any = {
@@ -141,14 +133,12 @@ export const burn = async (
   };
 
   const signedTx = wallet.sign(transactionJson);
-
   Logger.info("signedTx: " + JSON.stringify(signedTx));
 
   const tx = await client.request({
     command: "submit",
     tx_blob: signedTx.tx_blob,
   });
-
   Logger.info("tx: " + JSON.stringify(tx));
 
   await client.disconnect();
@@ -166,11 +156,8 @@ export const createSellOffer = async (
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
-
   const account_info = await getAccount(address);
-
   const currentSequence = account_info.result.account_data.Sequence;
-
   Logger.info("currentSequence: " + currentSequence);
 
   const transactionJson: any = {
@@ -185,14 +172,12 @@ export const createSellOffer = async (
   };
 
   const signedTx = wallet.sign(transactionJson);
-
   Logger.info("signedTx: " + JSON.stringify(signedTx));
 
   const tx = await client.request({
     command: "submit",
     tx_blob: signedTx.tx_blob,
   });
-
   Logger.info("tx: " + JSON.stringify(tx));
 
   await client.disconnect();
@@ -209,9 +194,7 @@ export const acceptSellOffer = async (
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
-
   const account_info = await getAccount(address);
-
   const currentSequence = account_info.result.account_data.Sequence;
 
   Logger.info("currentSequence: " + currentSequence);
@@ -225,14 +208,12 @@ export const acceptSellOffer = async (
   };
 
   const signedTx = wallet.sign(transactionJson);
-
   Logger.info("signedTx: " + JSON.stringify(signedTx));
 
   const tx = await client.request({
     command: "submit",
     tx_blob: signedTx.tx_blob,
   });
-
   Logger.info("tx: " + JSON.stringify(tx));
 
   await client.disconnect();

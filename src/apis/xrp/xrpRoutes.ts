@@ -12,25 +12,21 @@ xrpRoutes.get(
   JoiValidator.body(XrpSchemas.getTest),
   XrpController.getTest,
 );
-
 xrpRoutes.get(
   "/account/:address",
   JoiValidator.params(XrpSchemas.getAccount),
   XrpController.getAccount,
 );
-
 xrpRoutes.get(
   "/nfts/:address",
   JoiValidator.params(XrpSchemas.getNfts),
   XrpController.getNfts,
 );
-
 xrpRoutes.get(
   "/offer/sell/:tokenId",
   JoiValidator.params(XrpSchemas.getSellOffers),
   XrpController.getSellOffers,
 );
-
 xrpRoutes.get(
   "/decode/:uri",
   JoiValidator.params(XrpSchemas.decode),
@@ -39,7 +35,6 @@ xrpRoutes.get(
 
 // Post Routes
 xrpRoutes.post("/fund", XrpController.fund);
-
 xrpRoutes.post("/mint", JoiValidator.body(XrpSchemas.mint), XrpController.mint);
 xrpRoutes.post("/burn", JoiValidator.body(XrpSchemas.burn), XrpController.burn);
 xrpRoutes.post(
