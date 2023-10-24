@@ -1,7 +1,5 @@
 import "dotenv/config";
 import express, { Request, Response } from "express";
-import cors from "cors";
-import corsOptions from "./configs/corsOptions.js";
 import morganMiddleware from "./middlewares/morganMiddleware.js";
 import Logger from "./middlewares/logger.js";
 import exceptionHandler from "./middlewares/exceptionHandler.js";
@@ -16,9 +14,6 @@ app.use(express.json({ limit: "20mb" }));
 
 // Built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
-
-// Cross Origin Resource Sharing
-app.use(cors(corsOptions));
 
 // Morgan middleware with Winston
 app.use(morganMiddleware);

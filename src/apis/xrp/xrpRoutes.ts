@@ -6,7 +6,7 @@ import * as XrpSchemas from "./xrpSchemas.js";
 
 const xrpRoutes = Router();
 
-// Get Routes
+/***** GET Routes *****/
 xrpRoutes.get(
   "/",
   JoiValidator.body(XrpSchemas.getTest),
@@ -28,12 +28,17 @@ xrpRoutes.get(
   XrpController.getSellOffers,
 );
 xrpRoutes.get(
+  "/offer/buy/:tokenId",
+  JoiValidator.params(XrpSchemas.getBuyOffers),
+  XrpController.getBuyOffers,
+);
+xrpRoutes.get(
   "/decode/:uri",
   JoiValidator.params(XrpSchemas.decode),
   XrpController.decode,
 );
 
-// Post Routes
+/***** POST Routes *****/
 xrpRoutes.post("/fund", XrpController.fund);
 xrpRoutes.post("/mint", JoiValidator.body(XrpSchemas.mint), XrpController.mint);
 xrpRoutes.post("/burn", JoiValidator.body(XrpSchemas.burn), XrpController.burn);
@@ -46,6 +51,21 @@ xrpRoutes.post(
   "/offer/sell/accept",
   JoiValidator.body(XrpSchemas.acceptSellOffer),
   XrpController.acceptSellOffer,
+);
+xrpRoutes.post(
+  "/offer/buy/create",
+  JoiValidator.body(XrpSchemas.createBuyOffer),
+  XrpController.createBuyOffer,
+);
+xrpRoutes.post(
+  "/offer/buy/accept",
+  JoiValidator.body(XrpSchemas.acceptBuyOffer),
+  XrpController.acceptBuyOffer,
+);
+xrpRoutes.post(
+  "/offer/cancel",
+  JoiValidator.body(XrpSchemas.cancelOffers),
+  XrpController.cancelOffers,
 );
 
 export default xrpRoutes;

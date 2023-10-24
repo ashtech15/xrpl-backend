@@ -6,8 +6,6 @@ import Logger from "../../middlewares/logger.js";
 import * as XrpService from "./xrpService.js";
 
 /**** Get *****/
-
-// Define a route handler for the default home page of admin
 export const getTest: RequestHandler = async (_, res) => {
   const xrp = await XrpService.getTest();
   Logger.info("Logger getTest xrp");
@@ -36,6 +34,14 @@ export const getSellOffers: RequestHandler = async (req, res) => {
 
   const sellOffers = await XrpService.getSellOffers(tokenId);
   const response = new SuccessResponse(null, sellOffers);
+  res.status(StatusCodes.OK).send(response);
+};
+
+export const getBuyOffers: RequestHandler = async (req, res) => {
+  const { tokenId } = req.params;
+
+  const buyOffers = await XrpService.getBuyOffers(tokenId);
+  const response = new SuccessResponse(null, buyOffers);
   res.status(StatusCodes.OK).send(response);
 };
 
@@ -72,12 +78,13 @@ export const burn: RequestHandler = async (req, res) => {
 };
 
 export const createSellOffer: RequestHandler = async (req, res) => {
-  const { address, seed, tokenId, destination } = req.body;
+  const { address, seed, tokenId, amount, destination } = req.body;
 
   const createSellOfferResult = await XrpService.createSellOffer(
     address,
     seed,
     tokenId,
+    amount,
     destination,
   );
   const response = new SuccessResponse(null, createSellOfferResult);
@@ -93,5 +100,44 @@ export const acceptSellOffer: RequestHandler = async (req, res) => {
     sellOffer,
   );
   const response = new SuccessResponse(null, acceptSellOfferResult);
+  res.status(StatusCodes.OK).send(response);
+};
+
+export const createBuyOffer: RequestHandler = async (req, res) => {
+  const { address, seed, tokenId, owner, amount, destination } = req.body;
+
+  const createBuyOfferResult = await XrpService.createBuyOffer(
+    address,
+    seed,
+    tokenId,
+    owner,
+    amount,
+    destination,
+  );
+  const response = new SuccessResponse(null, createBuyOfferResult);
+  res.status(StatusCodes.OK).send(response);
+};
+
+export const acceptBuyOffer: RequestHandler = async (req, res) => {
+  const { address, seed, buyOffer } = req.body;
+
+  const acceptBuyOfferResult = await XrpService.acceptBuyOffer(
+    address,
+    seed,
+    buyOffer,
+  );
+  const response = new SuccessResponse(null, acceptBuyOfferResult);
+  res.status(StatusCodes.OK).send(response);
+};
+
+export const cancelOffers: RequestHandler = async (req, res) => {
+  const { address, seed, offers } = req.body;
+
+  const cancelOffersResult = await XrpService.cancelOffers(
+    address,
+    seed,
+    offers,
+  );
+  const response = new SuccessResponse(null, cancelOffersResult);
   res.status(StatusCodes.OK).send(response);
 };

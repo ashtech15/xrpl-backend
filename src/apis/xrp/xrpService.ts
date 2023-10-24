@@ -45,11 +45,26 @@ export const getSellOffers = async (tokenId: string): Promise<any> => {
     command: "nft_sell_offers",
     nft_id: tokenId,
   });
-  Logger.info("sellOffers: " + JSON.stringify(sellOffers));
+  Logger.info("Sell Offers: " + JSON.stringify(sellOffers));
 
   await client.disconnect();
 
   return sellOffers;
+};
+
+export const getBuyOffers = async (tokenId: string): Promise<any> => {
+  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+  await client.connect();
+
+  const buyOffers = await client.request({
+    command: "nft_buy_offers",
+    nft_id: tokenId,
+  });
+  Logger.info("Buy Offers: " + JSON.stringify(buyOffers));
+
+  await client.disconnect();
+
+  return buyOffers;
 };
 
 export const decode = async (uri: string): Promise<string> => {
@@ -150,7 +165,8 @@ export const createSellOffer = async (
   address: string,
   seed: string,
   tokenId: string,
-  destination: string,
+  amount: string,
+  destination?: string,
 ): Promise<any> => {
   const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
   await client.connect();
@@ -165,7 +181,7 @@ export const createSellOffer = async (
     Account: address,
     NFTokenID: tokenId,
     Fee: "10",
-    Amount: "0",
+    Amount: amount,
     Flags: 1,
     Destination: destination,
     Sequence: currentSequence,
@@ -204,6 +220,119 @@ export const acceptSellOffer = async (
     Account: address,
     Fee: "10",
     NFTokenSellOffer: sellOffer,
+    Sequence: currentSequence,
+  };
+
+  const signedTx = wallet.sign(transactionJson);
+  Logger.info("signedTx: " + JSON.stringify(signedTx));
+
+  const tx = await client.request({
+    command: "submit",
+    tx_blob: signedTx.tx_blob,
+  });
+  Logger.info("tx: " + JSON.stringify(tx));
+
+  await client.disconnect();
+
+  return tx;
+};
+
+export const createBuyOffer = async (
+  address: string,
+  seed: string,
+  tokenId: string,
+  owner: string,
+  amount: string,
+  destination?: string,
+): Promise<any> => {
+  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+  await client.connect();
+
+  const wallet = xrpl.Wallet.fromSeed(seed);
+  const account_info = await getAccount(address);
+  const currentSequence = account_info.result.account_data.Sequence;
+  Logger.info("currentSequence: " + currentSequence);
+
+  const transactionJson: any = {
+    TransactionType: "NFTokenCreateOffer",
+    Account: address,
+    Owner: owner,
+    NFTokenID: tokenId,
+    Fee: "10",
+    Amount: amount,
+    Flags: null,
+    Destination: destination,
+    Sequence: currentSequence,
+  };
+
+  const signedTx = wallet.sign(transactionJson);
+  Logger.info("signedTx: " + JSON.stringify(signedTx));
+
+  const tx = await client.request({
+    command: "submit",
+    tx_blob: signedTx.tx_blob,
+  });
+  Logger.info("tx: " + JSON.stringify(tx));
+
+  await client.disconnect();
+
+  return tx;
+};
+
+export const acceptBuyOffer = async (
+  address: string,
+  seed: string,
+  buyOffer: string,
+): Promise<any> => {
+  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+  await client.connect();
+
+  const wallet = xrpl.Wallet.fromSeed(seed);
+  const account_info = await getAccount(address);
+  const currentSequence = account_info.result.account_data.Sequence;
+
+  Logger.info("currentSequence: " + currentSequence);
+
+  const transactionJson: any = {
+    TransactionType: "NFTokenAcceptOffer",
+    Account: address,
+    Fee: "10",
+    NFTokenBuyOffer: buyOffer,
+    Sequence: currentSequence,
+  };
+
+  const signedTx = wallet.sign(transactionJson);
+  Logger.info("signedTx: " + JSON.stringify(signedTx));
+
+  const tx = await client.request({
+    command: "submit",
+    tx_blob: signedTx.tx_blob,
+  });
+  Logger.info("tx: " + JSON.stringify(tx));
+
+  await client.disconnect();
+
+  return tx;
+};
+
+export const cancelOffers = async (
+  address: string,
+  seed: string,
+  offers: string,
+): Promise<any> => {
+  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+  await client.connect();
+
+  const wallet = xrpl.Wallet.fromSeed(seed);
+  const account_info = await getAccount(address);
+  const currentSequence = account_info.result.account_data.Sequence;
+  Logger.info("currentSequence: " + currentSequence);
+
+  const transactionJson: any = {
+    TransactionType: "NFTokenCancelOffer",
+    Account: address,
+    NFTokenOffers: offers,
+    Fee: "10",
     Sequence: currentSequence,
   };
 

@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { eoaValidation } from "../../utils/customValidation.js";
 
 export const getTest = Joi.object({
   exampleKeyRequired: Joi.string().required(),
@@ -30,6 +29,7 @@ export const createSellOffer = Joi.object({
   address: Joi.string().required(),
   seed: Joi.string().required(),
   tokenId: Joi.string().required(),
+  amount: Joi.string().required(),
   destination: Joi.string().required(),
 });
 
@@ -39,7 +39,32 @@ export const acceptSellOffer = Joi.object({
   sellOffer: Joi.string().required(),
 });
 
+export const createBuyOffer = Joi.object({
+  address: Joi.string().required(),
+  seed: Joi.string().required(),
+  tokenId: Joi.string().required(),
+  owner: Joi.string().required(),
+  amount: Joi.string().required(),
+  destination: Joi.string().required(),
+});
+
+export const acceptBuyOffer = Joi.object({
+  address: Joi.string().required(),
+  seed: Joi.string().required(),
+  buyOffer: Joi.string().required(),
+});
+
+export const cancelOffers = Joi.object({
+  address: Joi.string().required(),
+  seed: Joi.string().required(),
+  offers: Joi.array().items(Joi.string()).required(),
+});
+
 export const getSellOffers = Joi.object({
+  tokenId: Joi.string().required(),
+});
+
+export const getBuyOffers = Joi.object({
   tokenId: Joi.string().required(),
 });
 
