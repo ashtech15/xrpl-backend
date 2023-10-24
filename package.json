@@ -1,0 +1,38 @@
+{
+  "name": "xrp-test",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc-watch --noClear -p tsconfig.json --onSuccess 'node dist/index.js'",
+    "build": "tsc -p tsconfig.json",
+    "swagger": "tsc -p tsconfig.json && node dist/swagger/swagger.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/tsc-watch": "^4.2.2",
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.4.2",
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "@types/morgan": "^1.9.7",
+    "@types/node": "^20.8.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.0",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "http-status-codes": "^2.3.0",
+    "joi": "^17.11.0",
+    "morgan": "^1.10.0",
+    "prisma": "^5.4.2",
+    "swagger-autogen": "^2.23.6",
+    "winston": "^3.11.0",
+    "xrpl": "^2.13.0"
+  }
+}
