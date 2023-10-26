@@ -5,6 +5,7 @@ import Logger from "./middlewares/logger.js";
 import exceptionHandler from "./middlewares/exceptionHandler.js";
 import { StatusCodes } from "http-status-codes";
 import xrpRoutes from "./apis/xrp/xrpRoutes.js";
+import scenarioRoutes from "./apis/scenario/scenarioRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,8 @@ app.use(morganMiddleware);
 // Routes
 // prettier-ignore
 app.use("/xrp", xrpRoutes);
+// prettier-ignore
+app.use("/scenario", scenarioRoutes);
 
 // Define a route handler for the default home page
 app.get("/", (_, res: Response) => {
