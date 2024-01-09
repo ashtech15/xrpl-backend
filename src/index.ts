@@ -6,12 +6,15 @@ import exceptionHandler from "./middlewares/exceptionHandler.js";
 import { StatusCodes } from "http-status-codes";
 import xrpRoutes from "./apis/xrp/xrpRoutes.js";
 import scenarioRoutes from "./apis/scenario/scenarioRoutes.js";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Built-in middleware for json
 app.use(express.json({ limit: "20mb" }));
+
+app.use(cors());
 
 // Built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
