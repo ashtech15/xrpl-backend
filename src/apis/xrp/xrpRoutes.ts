@@ -27,6 +27,11 @@ xrpRoutes.get(
   JoiValidator.params(XrpSchemas.getSellOffers),
   XrpController.getSellOffers,
 );
+xrpRoutes.post(
+  "/offer/all/sell",
+  JoiValidator.body(XrpSchemas.getAllSellOffers),
+  XrpController.getAllSellOffers,
+);
 xrpRoutes.get(
   "/offer/buy/:tokenId",
   JoiValidator.params(XrpSchemas.getBuyOffers),
@@ -40,6 +45,7 @@ xrpRoutes.get(
 
 /***** POST Routes *****/
 xrpRoutes.post("/fund", XrpController.fund);
+xrpRoutes.post("/fund/setup", XrpController.fundSetup);
 xrpRoutes.post("/mint", JoiValidator.body(XrpSchemas.mint), XrpController.mint);
 xrpRoutes.post("/burn", JoiValidator.body(XrpSchemas.burn), XrpController.burn);
 xrpRoutes.post(

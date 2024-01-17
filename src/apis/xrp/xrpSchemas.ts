@@ -64,6 +64,11 @@ export const getSellOffers = Joi.object({
   tokenId: Joi.string().required(),
 });
 
+export const getAllSellOffers = Joi.object({
+  tokenIds: Joi.array().items(Joi.string()).required(),
+  destination: Joi.string().required(),
+});
+
 export const getBuyOffers = Joi.object({
   tokenId: Joi.string().required(),
 });

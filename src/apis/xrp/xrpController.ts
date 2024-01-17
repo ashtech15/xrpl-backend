@@ -37,6 +37,17 @@ export const getSellOffers: RequestHandler = async (req, res) => {
   res.status(StatusCodes.OK).send(response);
 };
 
+export const getAllSellOffers: RequestHandler = async (req, res) => {
+  const { tokenIds, destination } = req.body;
+
+  const allSellOffers = await XrpService.getAllSellOffers(
+    tokenIds,
+    destination,
+  );
+  const response = new SuccessResponse(allSellOffers);
+  res.status(StatusCodes.OK).send(response);
+};
+
 export const getBuyOffers: RequestHandler = async (req, res) => {
   const { tokenId } = req.params;
 
@@ -58,6 +69,21 @@ export const fund: RequestHandler = async (req, res) => {
   const fundResult = await XrpService.fund();
 
   const response = new SuccessResponse(fundResult);
+  res.status(StatusCodes.OK).send(response);
+};
+
+export const fundSetup: RequestHandler = async (req, res) => {
+  const [platform, userA, userB] = await Promise.all([
+    XrpService.fund(),
+    XrpService.fund(),
+    XrpService.fund(),
+  ]);
+
+  const response = new SuccessResponse({
+    platform,
+    userA,
+    userB,
+  });
   res.status(StatusCodes.OK).send(response);
 };
 

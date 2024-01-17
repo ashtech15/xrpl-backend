@@ -1,6 +1,5 @@
 import Logger from "../middlewares/logger.js";
 
-// Currently not in use
 export abstract class ApiResponse {
   value: unknown;
   message: string;

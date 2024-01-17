@@ -7,8 +7,10 @@ export const getTest = async (): Promise<string> => {
   return "Hello world from /xrp";
 };
 
-export const getAccount = async (address: string): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+export const getAccount = async (
+  address: string,
+): Promise<xrpl.AccountInfoResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const account_info = await client.request({
@@ -22,8 +24,10 @@ export const getAccount = async (address: string): Promise<any> => {
   return account_info;
 };
 
-export const getNfts = async (address: string): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+export const getNfts = async (
+  address: string,
+): Promise<xrpl.AccountNFTsResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const nfts = await client.request({
@@ -37,23 +41,120 @@ export const getNfts = async (address: string): Promise<any> => {
   return nfts;
 };
 
-export const getSellOffers = async (tokenId: string): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
-  await client.connect();
+// export const getSellOffers = async (tokenId: string): Promise<xrpl.NFTSellOffersResponse> => {
+//   const client = new xrpl.Client(process.env.XRPL_PROVIDER);
 
-  const sellOffers = await client.request({
-    command: "nft_sell_offers",
-    nft_id: tokenId,
-  });
-  Logger.info("Sell Offers: " + JSON.stringify(sellOffers));
+//   await client.connect();
 
-  await client.disconnect();
+//   const sellOffers = await client.request({
+//     command: "nft_sell_offers",
+//     nft_id: tokenId,
+//   });
+//   Logger.info("Sell Offers: " + JSON.stringify(sellOffers));
 
-  return sellOffers;
+//   await client.disconnect();
+//   return sellOffers;
+// };
+export const getSellOffers = async (
+  tokenId: string,
+): Promise<xrpl.NFTSellOffersResponse | null> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
+
+  try {
+    await client.connect();
+
+    const sellOffers = await client.request({
+      command: "nft_sell_offers",
+      nft_id: tokenId,
+    });
+    Logger.info("Sell Offers: " + JSON.stringify(sellOffers));
+
+    return sellOffers;
+  } catch (error) {
+    return null;
+  } finally {
+    await client.disconnect();
+  }
 };
 
-export const getBuyOffers = async (tokenId: string): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+type allSellOffers = {
+  nft_id: string;
+  offers: xrpl.NFTOffer[];
+}[];
+
+export const getAllSellOffers = async (
+  tokenIds: string[],
+  destination: string,
+): Promise<allSellOffers> => {
+  const allSellOffers = (
+    await Promise.all(
+      tokenIds.map(async (tokenId) => {
+        const sellOffers = await getSellOffers(tokenId);
+
+        if (sellOffers === null) {
+          return null;
+        }
+
+        const filteredOffers = sellOffers.result.offers.filter(
+          (offer: { destination?: string }) =>
+            offer.destination === destination,
+        );
+
+        if (filteredOffers.length === 0) {
+          return null;
+        }
+        return { nft_id: tokenId, offers: filteredOffers };
+      }),
+    )
+  ).filter((offer) => offer !== null);
+
+  return allSellOffers;
+};
+
+// export const getAllSellOffers = async (
+//   tokenIds: string[],
+//   destination: string,
+// ): Promise<filteredAllSellOffersWithoutNFTs> => {
+//   const nfts = await getNfts(destination);
+
+//   const allSellOffers = await Promise.all(
+//     tokenIds.map(async (tokenId) => {
+//       const sellOffers = await getSellOffers(tokenId);
+
+//       if (sellOffers === null) {
+//         return null;
+//       }
+
+//       const filteredOffers = sellOffers.result.offers.filter(
+//         (offer: { destination?: string }) => offer.destination === destination,
+//       );
+
+//       if (filteredOffers.length === 0) {
+//         return null;
+//       }
+//       return { nft_id: tokenId, offers: filteredOffers };
+//     }),
+//   );
+
+//   const filterdAllSellOffers = allSellOffers.filter(
+//     (offer: { offers: any }) => offer !== null,
+//   );
+
+//   const filteredAllSellOffersWithoutNFTs = filterdAllSellOffers.filter(
+//     (offer: { nft_id: string }) => {
+//       return !nfts.result.account_nfts.some(
+//         (nft: { NFTokenID: string }) => nft.NFTokenID === offer.nft_id,
+//       );
+//     },
+//   );
+
+//   return filteredAllSellOffersWithoutNFTs;
+// };
+
+export const getBuyOffers = async (
+  tokenId: string,
+): Promise<xrpl.NFTBuyOffersResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const buyOffers = await client.request({
@@ -74,8 +175,14 @@ export const decode = async (uri: string): Promise<string> => {
 };
 
 /***** POST *****/
-export const fund = async (): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+
+type fundResult = {
+  wallet: xrpl.Wallet;
+  balance: number;
+};
+
+export const fund = async (): Promise<fundResult> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const fund_result = await client.fundWallet();
@@ -92,8 +199,8 @@ export const mint = async (
   address: string,
   seed: string,
   uri: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -130,8 +237,8 @@ export const burn = async (
   address: string,
   seed: string,
   tokenId: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -167,8 +274,8 @@ export const createSellOffer = async (
   tokenId: string,
   amount: string,
   destination?: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -205,8 +312,8 @@ export const acceptSellOffer = async (
   address: string,
   seed: string,
   sellOffer: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -244,8 +351,8 @@ export const createBuyOffer = async (
   owner: string,
   amount: string,
   destination?: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -283,8 +390,8 @@ export const acceptBuyOffer = async (
   address: string,
   seed: string,
   buyOffer: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
@@ -319,8 +426,8 @@ export const cancelOffers = async (
   address: string,
   seed: string,
   offers: string,
-): Promise<any> => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+): Promise<xrpl.SubmitResponse> => {
+  const client = new xrpl.Client(process.env.XRPL_PROVIDER);
   await client.connect();
 
   const wallet = xrpl.Wallet.fromSeed(seed);
