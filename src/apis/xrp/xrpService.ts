@@ -41,20 +41,6 @@ export const getNfts = async (
   return nfts;
 };
 
-// export const getSellOffers = async (tokenId: string): Promise<xrpl.NFTSellOffersResponse> => {
-//   const client = new xrpl.Client(process.env.XRPL_PROVIDER);
-
-//   await client.connect();
-
-//   const sellOffers = await client.request({
-//     command: "nft_sell_offers",
-//     nft_id: tokenId,
-//   });
-//   Logger.info("Sell Offers: " + JSON.stringify(sellOffers));
-
-//   await client.disconnect();
-//   return sellOffers;
-// };
 export const getSellOffers = async (
   tokenId: string,
 ): Promise<xrpl.NFTSellOffersResponse | null> => {
@@ -110,46 +96,6 @@ export const getAllSellOffers = async (
 
   return allSellOffers;
 };
-
-// export const getAllSellOffers = async (
-//   tokenIds: string[],
-//   destination: string,
-// ): Promise<filteredAllSellOffersWithoutNFTs> => {
-//   const nfts = await getNfts(destination);
-
-//   const allSellOffers = await Promise.all(
-//     tokenIds.map(async (tokenId) => {
-//       const sellOffers = await getSellOffers(tokenId);
-
-//       if (sellOffers === null) {
-//         return null;
-//       }
-
-//       const filteredOffers = sellOffers.result.offers.filter(
-//         (offer: { destination?: string }) => offer.destination === destination,
-//       );
-
-//       if (filteredOffers.length === 0) {
-//         return null;
-//       }
-//       return { nft_id: tokenId, offers: filteredOffers };
-//     }),
-//   );
-
-//   const filterdAllSellOffers = allSellOffers.filter(
-//     (offer: { offers: any }) => offer !== null,
-//   );
-
-//   const filteredAllSellOffersWithoutNFTs = filterdAllSellOffers.filter(
-//     (offer: { nft_id: string }) => {
-//       return !nfts.result.account_nfts.some(
-//         (nft: { NFTokenID: string }) => nft.NFTokenID === offer.nft_id,
-//       );
-//     },
-//   );
-
-//   return filteredAllSellOffersWithoutNFTs;
-// };
 
 export const getBuyOffers = async (
   tokenId: string,
