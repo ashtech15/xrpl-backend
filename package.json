@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "proxy": "http://localhost:5170",
   "scripts": {
-    "start": "tsc-watch --noClear -p tsconfig.json --onSuccess 'node dist/index.js'",
+    "dev": "tsc-watch --noClear -p tsconfig.json --onSuccess 'node dist/index.js'",
     "build": "tsc -p tsconfig.json",
     "swagger": "tsc -p tsconfig.json && node dist/swagger/swagger.js"
   },
